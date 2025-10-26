@@ -20,7 +20,6 @@ export interface FilterOptions {
   filters?: Record<string, any>;
 }
 
-export type Status = 'draft' | 'submitted' | 'underwriting' | 'approved' | 'active' | 'suspended' | 'cancelled' | 'expired';
 export type Status = 'draft' | 'submitted' | 'underwriting' | 'approved' | 'active' | 'suspended' | 'cancelled' | 'expired' | 'under-review' | 'rejected' | 'amended' | 'pending' | 'failed' | 'flagged' | 'investigating';
 
 export interface AuditLog {
@@ -81,7 +80,7 @@ export interface Application {
       valuationReport?: string;
     };
   };
-  status: 'submitted' | 'under-review' | 'approved' | 'rejected' | 'amended';
+  status: 'submitted' | 'pending' | 'approved' | 'rejected' | 'amended';
   submittedAt: string;
   reviewedAt?: string;
   reviewedBy?: string;

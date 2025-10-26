@@ -1,9 +1,20 @@
-import React from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
-import { TrendingUp, Users, FileText, DollarSign, AlertTriangle, Award } from 'lucide-react';
+import React from "react";
+import { useSelector } from "react-redux";
+import {
+  TrendingUp,
+  Users,
+  FileText,
+  DollarSign,
+  AlertTriangle,
+  Award,
+} from "lucide-react";
+import { RootState } from "../../../store/store";
+import { checkUserPermission } from "../../../service/authSlice";
 
 export function RoleBasedWidgets() {
-  const { user, hasPermission } = useAuth();
+  const userPermissions = useSelector(
+    (state: RootState) => state.auth.authData.permissions
+  );
 
   const renderUnderwriterWidget = () => (
     <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
@@ -99,19 +110,20 @@ export function RoleBasedWidgets() {
 
   const widgets = [];
 
-  if (hasPermission('policies.approve')) {
+  // Super Admins with "*" permission will see all widgets
+  if (checkUserPermission(userPermissions, "policies.approve")) {
     widgets.push(renderUnderwriterWidget());
   }
 
-  if (hasPermission('wallet.read')) {
+  if (checkUserPermission(userPermissions, "wallet.read")) {
     widgets.push(renderFinanceWidget());
   }
 
-  if (hasPermission('compliance.read')) {
+  if (checkUserPermission(userPermissions, "compliance.read")) {
     widgets.push(renderComplianceWidget());
   }
 
-  if (hasPermission('analytics.read')) {
+  if (checkUserPermission(userPermissions, "analytics.read")) {
     widgets.push(renderAnalyticsWidget());
   }
 
