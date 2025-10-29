@@ -1,23 +1,29 @@
-import React from 'react';
-import { DashboardStats } from './components/DashboardStats';
-import { RecentActivity } from './components/RecentActivity';
-import { QuickActions } from './components/QuickActions';
-import { SystemHealth } from './components/SystemHealth';
-import { RoleBasedWidgets } from './components/RoleBasedWidgets';
+import React from "react";
+import { DashboardStats } from "./components/DashboardStats";
+import { RecentActivity } from "./components/RecentActivity";
+import { QuickActions } from "./components/QuickActions";
+import { SystemHealth } from "./components/SystemHealth";
+import { RoleBasedWidgets } from "./components/RoleBasedWidgets";
+import { useGetDashboardDetailsQuery } from "../../service";
 
 export function Dashboard() {
+  const { data: dashboardData, isLoading } = useGetDashboardDetailsQuery();
+  console.log("Dashboard Data:", dashboardData);
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Dashboard
+        </h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Welcome to the BrickSure Admin Console. Here's an overview of your system.
+          Welcome to the BrickSure Admin Console. Here's an overview of your
+          system.
         </p>
       </div>
 
       {/* Stats */}
-      <DashboardStats />
+      <DashboardStats data={dashboardData?.data} isLoading={isLoading} />
 
       {/* Role-based Widgets */}
       <RoleBasedWidgets />
