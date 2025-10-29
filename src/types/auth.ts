@@ -388,3 +388,37 @@ export interface LastUpdatedBy {
   _id: string
   email: string
 }
+
+// Roles
+export interface GetAllRolesResponse {
+  message: string
+  data: GetRolesData
+}
+
+export interface GetRolesData {
+  totalCount: number
+  roles: RoleData[]
+}
+
+export interface RoleData {
+  _id: string
+  name: string
+  createdAt: string
+  updatedAt: string
+}
+
+// Dashboard
+export interface DashboardResponse {
+  message: string
+  data: DashboardData
+}
+
+export interface DashboardData {
+  users: number
+  totalQuotes: number
+  activeQuotes: number
+  totalUnpaidQuotes: number
+  totalUnderGoingReview: number
+  totalAmountForActivePolicies: number
+}
+

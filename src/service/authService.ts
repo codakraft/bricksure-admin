@@ -1,5 +1,5 @@
 import { api } from "./api";
-import { ChangePasswordRequest, ForgotPasswordRequest, LoginRequest, LoginResponse, RefreshTokenRequest, RegisterRequest, ResetPasswordRequest } from "../types/auth";
+import { ChangePasswordRequest, DashboardResponse, ForgotPasswordRequest, GetAllRolesResponse, LoginRequest, LoginResponse, RefreshTokenRequest, RegisterRequest, ResetPasswordRequest } from "../types/auth";
 
 
 
@@ -15,7 +15,20 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Auth"],
     }),
-
+    getAllRoles: builder.query<GetAllRolesResponse, void>({
+      query: () => ({
+        url: "/api/v1/admin/permissions/view-roles",
+        method: "GET",
+      }),
+      // providesTags: ["Auth"],
+    }),
+    getDashboardDetails: builder.query<DashboardResponse, void>({
+      query: () => ({
+        url: "/api/v1/admin/dashboard",
+        method: "GET",
+      }),
+      // providesTags: ["Auth"],
+    }),
     register: builder.mutation<LoginResponse, RegisterRequest>({
       query: (userData) => ({
         url: "/auth/register",
@@ -97,4 +110,5 @@ export const {
   useRefreshTokenMutation,
   useGetCurrentUserQuery,
   useVerifyTokenQuery,
+  useGetDashboardDetailsQuery,
 } = authApi;
