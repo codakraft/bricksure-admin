@@ -16,7 +16,7 @@ const baseQueryWithAuth = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const localToken = localStorage.getItem("bricksure-token");
     const { token } = (getState() as RootState).auth;
-    console.log("Preparing headers with token:", token, localToken);
+   
     if (token) {
       headers.set("authorization", `Bearer ${token || localToken}`);
     }
@@ -72,7 +72,7 @@ const baseQueryWithErrorHandling = async (
         ENCRYPTION_KEY,
         IV_KEY
       );
-      console.log("Decrypted response data:", decryptedData);
+      
       return {
         ...result,
         data: JSON.parse(decryptedData),

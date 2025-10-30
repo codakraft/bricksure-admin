@@ -95,9 +95,7 @@ class EncryptionService {
       const iv = this.getIV(ivKey);
 
       // Debug logging (remove in production)
-      console.log("Decryption Debug:");
-      console.log("- Input hex:", encryptedHex);
-      console.log("- IV length:", iv.byteLength);
+      
 
       // Convert hex string to ArrayBuffer (matching backend hex input)
       const encryptedData = new Uint8Array(
@@ -118,7 +116,7 @@ class EncryptionService {
 
       const decoder = new TextDecoder();
       const result = decoder.decode(decrypted);
-      console.log("- Decrypted result:", result);
+      
 
       return result;
     } catch (error) {

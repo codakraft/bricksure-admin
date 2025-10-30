@@ -117,10 +117,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { authData: userPermissions } = useSelector(
     (state: RootState) => state.auth
   );
-  const user = useSelector((state: RootState) => state.auth);
 
-  console.log("Sidebar userPermissions:", userPermissions);
-  console.log("Sidebar user details:", user);
   const visibleItems = navigationItems.filter(
     (item) =>
       item.permission === "*" ||

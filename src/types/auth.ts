@@ -184,6 +184,8 @@ export interface QuoteUser {
   _id: string
   email: string
   phoneNumber: string
+  firstName: string
+  lastName: string
 }
 
 export interface Charges {
@@ -224,6 +226,12 @@ export interface MetaData {
 }
 
 // charges
+export interface ChargeRequestData {
+  propertyTypeCharges?: PropertyTypeCharges
+  riskAdjustments?: RiskAdjustments
+  safetySecurityDiscounts?: SafetySecurityDiscounts
+  extraCoverageFees?: ExtraCoverageFees
+}
 export interface ChargesResponse {
   message: string
   data: ChargesData
@@ -421,4 +429,41 @@ export interface DashboardData {
   totalUnderGoingReview: number
   totalAmountForActivePolicies: number
 }
+
+// Admin Creation
+export interface CreateAdminRequest {
+  email: string
+  firstName: string
+  lastName: string
+  roleId: string
+}
+
+export interface CreateAdminResponse {
+  message: string
+  data: CreateAdminData
+}
+
+export interface CreateAdminData {
+  newAdmin: NewAdmin
+}
+
+export interface NewAdmin {
+  firstName: string
+  lastName: string
+  email: string
+  username: string | null
+  emailVerified: boolean
+  disabled: boolean
+  defaultPassword: boolean
+  loginAttempts: number
+  roleId: string
+  phoneNumber: string | null
+  isActive: boolean
+  password: string
+  _id: string
+  createdAt: string
+  updatedAt: string
+  __v: number
+}
+
 
