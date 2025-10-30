@@ -420,66 +420,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // Debug effect to track user state changes
-  useEffect(() => {
-    console.log("User state changed:", {
-      user: !!user,
-      isAuthenticated: !!user,
-      userData: user,
-    });
-  }, [user]);
-
-  useEffect(() => {
-    console.log("AuthProvider initializing...");
-    // Check for existing session from Redux auth tokens
-    // const authToken = localStorage.getItem("authToken");
-    // const bricksureToken = localStorage.getItem("bricksure-token");
-    // const savedUser = localStorage.getItem("bricksure_admin_user");
-    // const bricksureAdmin = localStorage.getItem("bricksure-admin");
-
-    // console.log("Initial auth check:", {
-    //   authToken: !!authToken,
-    //   bricksureToken: !!bricksureToken,
-    //   savedUser: !!savedUser,
-    //   bricksureAdmin: !!bricksureAdmin,
-    // });
-
-    // Priority: use authSlice data first, then fallback to our custom data
-    // if (bricksureToken && bricksureAdmin) {
-    //   try {
-    //     const userData = JSON.parse(bricksureAdmin);
-    //     console.log("Setting user from authSlice data during init:", userData);
-    //     // Convert authSlice format to AuthContext format
-    //     const authContextUser = {
-    //       id: userData._id,
-    //       email: userData.email,
-    //       name: `${userData.firstName} ${userData.lastName}`,
-    //       role: userData.role,
-    //       avatar: undefined,
-    //       department: undefined,
-    //       lastLogin: new Date().toISOString(),
-    //       mfaEnabled: false,
-    //     };
-    //     setUser(authContextUser);
-    //   } catch (error) {
-    //     console.error("Error parsing bricksure-admin data:", error);
-    //   }
-    // } else if (authToken && savedUser) {
-    //   try {
-    //     const userData = JSON.parse(savedUser);
-    //     console.log(
-    //       "Setting user from custom auth data during init:",
-    //       userData
-    //     );
-    //     setUser(userData);
-    //   } catch (error) {
-    //     console.error("Error parsing custom auth data:", error);
-    //   }
-    // } else {
-    //   console.log("No auth data found during init");
-    // }
-    // setLoading(false);
-    // console.log("AuthProvider initialization complete");
-  }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     // Mock authentication

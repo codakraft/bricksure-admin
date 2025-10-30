@@ -1,4 +1,6 @@
 import {
+  CreateAdminRequest,
+  CreateAdminResponse,
   DisableUserResponse,
   EnableUserResponse,
   GetAllUsersResponse,
@@ -10,23 +12,6 @@ import { api } from "./api";
 // Inject endpoints into the main API slice
 export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    // Get all users with pagination and filtering
-    // getUsers: builder.query<UsersListResponse, UsersListParams | void>({
-    //   query: (params) => {
-    //     const searchParams = new URLSearchParams();
-
-    //     if (params?.page) searchParams.append('page', params.page.toString());
-    //     if (params?.limit) searchParams.append('limit', params.limit.toString());
-    //     if (params?.search) searchParams.append('search', params.search);
-    //     if (params?.role) searchParams.append('role', params.role);
-    //     if (params?.isActive !== undefined) searchParams.append('isActive', params.isActive.toString());
-    //     if (params?.sortBy) searchParams.append('sortBy', params.sortBy);
-    //     if (params?.sortOrder) searchParams.append('sortOrder', params.sortOrder);
-
-    //     return `/users?${searchParams.toString()}`;
-    //   },
-    //   providesTags: ['User'],
-    // }),
     getAllUsers: builder.query<GetAllUsersResponse, void>({
       query: () => ({
         url: "/api/v1/admin/users/view-all",
@@ -48,14 +33,14 @@ export const userApi = api.injectEndpoints({
     }),
 
     // Create new user
-    // createUser: builder.mutation<User, CreateUserRequest>({
-    //   query: (userData) => ({
-    //     url: "/users",
-    //     method: "POST",
-    //     body: userData,
-    //   }),
-    //   invalidatesTags: ["User"],
-    // }),
+    createAdmin: builder.mutation<CreateAdminResponse, CreateAdminRequest>({
+      query: (body) => ({
+        url: "/api/v1/admin/auth/create",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
 
     // // Update user
     // updateUser: builder.mutation<User, UpdateUserRequest>({
@@ -198,7 +183,7 @@ export const {
   useLazyGetUserWalletQuery,
   useDisableUserMutation,
   useEnableUserMutation,
-  // useCreateUserMutation,
+  useCreateAdminMutation,
   // useUpdateUserMutation,
   // useDeleteUserMutation,
   // useToggleUserStatusMutation,

@@ -1,4 +1,4 @@
-import { ChargesResponse } from "../types/auth";
+import { ChargeRequestData, ChargesResponse } from "../types/auth";
 import { api } from "./api";
 
 // Additional types for charge operations
@@ -12,20 +12,6 @@ export interface CreateChargeRequest {
   applicableTo: string[];
 }
 
-export interface UpdateChargeRequest {
-  name?: string;
-  description?: string;
-  amount?: number;
-  chargeType?: 'fixed' | 'percentage';
-  category?: string;
-  isActive?: boolean;
-  applicableTo?: string[];
-}
-
-export interface ChargeResponse {
-  message: string;
-  data: any;
-}
 
 // Inject endpoints into the main API slice
 export const chargesApi = api.injectEndpoints({
@@ -38,7 +24,7 @@ export const chargesApi = api.injectEndpoints({
       providesTags: ["Charges"],
     }),
     
-    getChargeById: builder.query<ChargeResponse, { id: string }>({
+    getChargeById: builder.query<ChargesResponse, { id: string }>({
       query: ({ id }) => ({
         url: `/api/v1/admin/charges/${id}/view`,
         method: "GET",
@@ -46,7 +32,7 @@ export const chargesApi = api.injectEndpoints({
       providesTags: (_result, _error, { id }) => [{ type: "Charges", id }],
     }),
     
-    createCharge: builder.mutation<ChargeResponse, CreateChargeRequest>({
+    createCharge: builder.mutation<ChargesResponse, CreateChargeRequest>({
       query: (data) => ({
         url: `/api/v1/admin/charges/create`,
         method: "POST",
@@ -55,13 +41,13 @@ export const chargesApi = api.injectEndpoints({
       invalidatesTags: ["Charges"],
     }),
     
-    updateCharge: builder.mutation<ChargeResponse, { id: string; data: UpdateChargeRequest }>({
+    updateCharge: builder.mutation<ChargesResponse, { id: string; data: ChargeRequestData }>({
       query: ({ id, data }) => ({
-        url: `/api/v1/admin/charges/${id}/update`,
+        url: `/api/v1/admin/charges/update/${id}`,
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: (_result, _error, { id }) => [{ type: "Charges", id }, "Charges"],
+    //   invalidatesTags: (_result, _error, { id }) => [{ type: "Charges", id }, "Charges"],
     }),
     
     deleteCharge: builder.mutation<{ message: string }, { id: string }>({

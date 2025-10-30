@@ -72,7 +72,7 @@ function FieldReviewComponent({
           </label>
           {statusIcons[status]}
         </div>
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
             size="sm"
@@ -101,7 +101,7 @@ function FieldReviewComponent({
           >
             Reject
           </Button>
-        </div>
+        </div> */}
       </div>
       <p className="text-gray-700 dark:text-gray-300 mb-2">
         <strong>Current Value:</strong>{" "}
@@ -165,7 +165,7 @@ export function ApplicationDetail() {
   const { id } = useParams();
   const { addNotification } = useNotifications();
 
-  console.log("ApplicationDetailID:", id);
+  // console.log("ApplicationDetailID:", id);
 
   // Fetch quote by ID
   const {
@@ -184,13 +184,13 @@ export function ApplicationDetail() {
     return {
       id: quote.policyCode || quote._id,
       userId: quote.user?._id || "N/A",
-      userName: quote.user?.email?.split("@")[0] || "N/A",
+      userName: quote.user?.firstName + " " + quote.user?.lastName,
       userEmail: quote.user?.email || "N/A",
       propertyId: quote._id,
       propertyAddress: quote.address || "N/A",
       applicationData: {
         personalInfo: {
-          fullName: quote.user?.email?.split("@")[0] || "N/A",
+          fullName: quote.user?.firstName + " " + quote.user?.lastName,
           email: quote.user?.email || "N/A",
           phone: quote.user?.phoneNumber || "N/A",
           dateOfBirth: "N/A",
@@ -393,28 +393,32 @@ export function ApplicationDetail() {
         </div>
         <div className="flex items-center space-x-2">
           <StatusBadge status={application.status} />
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="danger"
-              icon={<XCircle className="w-4 h-4" />}
-              onClick={() => handleApplicationAction("reject")}
-            >
-              Reject
-            </Button>
-            <Button
-              variant="secondary"
-              icon={<Edit className="w-4 h-4" />}
-              onClick={() => handleApplicationAction("amend")}
-            >
-              Request Amendment
-            </Button>
-            <Button
-              icon={<CheckCircle className="w-4 h-4" />}
-              onClick={() => handleApplicationAction("approve")}
-            >
-              Approve
-            </Button>
-          </div>
+          {/* Only show action buttons if application is not in a final state */}
+          {application.status !== "approved" &&
+            application.status !== "rejected" && (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="danger"
+                  icon={<XCircle className="w-4 h-4" />}
+                  onClick={() => handleApplicationAction("reject")}
+                >
+                  Reject
+                </Button>
+                <Button
+                  variant="secondary"
+                  icon={<Edit className="w-4 h-4" />}
+                  onClick={() => handleApplicationAction("amend")}
+                >
+                  Request Amendment
+                </Button>
+                <Button
+                  icon={<CheckCircle className="w-4 h-4" />}
+                  onClick={() => handleApplicationAction("approve")}
+                >
+                  Approve
+                </Button>
+              </div>
+            )}
         </div>
       </div>
 
@@ -438,7 +442,13 @@ export function ApplicationDetail() {
             </label>
             <p className="font-medium text-gray-900 dark:text-white">
               ₦
-              {application.applicationData.coverageInfo.sumInsured.toLocaleString()}
+              {application.applicationData.coverageInfo.sumInsured.toLocaleString(
+                "en-NG",
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }
+              )}
             </p>
           </div>
           <div>
@@ -446,7 +456,13 @@ export function ApplicationDetail() {
               Calculated Premium
             </label>
             <p className="font-medium text-gray-900 dark:text-white">
-              ₦{application.premium?.toLocaleString() || "TBD"}
+              ₦
+              {application.premium
+                ? application.premium.toLocaleString("en-NG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : "TBD"}
             </p>
           </div>
         </div>
@@ -522,7 +538,13 @@ export function ApplicationDetail() {
             )}
             {renderFieldReview(
               "propertyInfo.estimatedValue",
-              application.applicationData.propertyInfo.estimatedValue,
+              application.applicationData.propertyInfo.estimatedValue.toLocaleString(
+                "en-NG",
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }
+              ),
               "Estimated Value"
             )}
           </div>
@@ -544,7 +566,13 @@ export function ApplicationDetail() {
             )}
             {renderFieldReview(
               "coverageInfo.sumInsured",
-              application.applicationData.coverageInfo.sumInsured,
+              application.applicationData.coverageInfo.sumInsured.toLocaleString(
+                "en-NG",
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }
+              ),
               "Sum Insured"
             )}
             {renderFieldReview(

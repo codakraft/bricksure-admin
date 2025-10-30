@@ -1,61 +1,64 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, MapPin } from 'lucide-react';
-import { Button } from '../../../components/common/Button';
-import { useNotifications } from '../../../contexts/NotificationContext';
-import { MakerCheckerModal } from '../../../components/common/MakerCheckerModal';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, User } from "lucide-react";
+import { Button } from "../../../components/common/Button";
+import { useNotifications } from "../../../contexts/NotificationContext";
+import { useGetAllRolesQuery } from "../../../service/authService";
+import { useCreateAdminMutation } from "../../../service/userService";
 
 export function CreateUser() {
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
+
+  // Fetch all roles
+  const { data: rolesResponse, isLoading: rolesLoading } =
+    useGetAllRolesQuery();
+
+  // Create admin mutation
+  const [createAdmin, { isLoading: isCreating }] = useCreateAdminMutation();
+
+  console.log("Roles Response:", rolesResponse);
+
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    role: 'customer',
-    department: '',
-    street: '',
-    city: '',
-    state: '',
-    country: 'Nigeria'
+    firstName: "",
+    lastName: "",
+    email: "",
+    roleId: "",
   });
-  const [showMakerChecker, setShowMakerChecker] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowMakerChecker(true);
-  };
 
-  const handleMakerCheckerSubmit = async () => {
-    setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      // Call the createAdmin API
+      const result = await createAdmin(formData).unwrap();
+
       addNotification({
-        type: 'success',
-        title: 'User Creation Submitted',
-        message: `User creation request for ${formData.name} has been submitted for approval.`
+        type: "success",
+        title: "User Created Successfully",
+        message: `${formData.firstName} ${formData.lastName} has been created successfully.`,
       });
-      
-      navigate('/users');
+
+      console.log("Admin created:", result);
+      navigate("/users");
     } catch (error) {
+      const apiError = error as { data?: { message?: string } };
       addNotification({
-        type: 'error',
-        title: 'Creation Failed',
-        message: 'Failed to submit user creation request. Please try again.'
+        type: "error",
+        title: "Creation Failed",
+        message:
+          apiError?.data?.message || "Failed to create user. Please try again.",
       });
-    } finally {
-      setLoading(false);
-      setShowMakerChecker(false);
+      console.error("Failed to create admin:", error);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -69,7 +72,9 @@ export function CreateUser() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create New User</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Create New User
+          </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Add a new customer or admin user to the system
           </p>
@@ -88,21 +93,44 @@ export function CreateUser() {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Full Name *
+                  <label
+                    htmlFor="firstName"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    First Name *
                   </label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
+                    id="firstName"
+                    name="firstName"
                     required
-                    value={formData.name}
+                    value={formData.firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Last Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    required
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     Email Address *
                   </label>
                   <input
@@ -116,89 +144,35 @@ export function CreateUser() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label
+                    htmlFor="roleId"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
                     User Role *
                   </label>
                   <select
-                    id="role"
-                    name="role"
+                    id="roleId"
+                    name="roleId"
                     required
-                    value={formData.role}
+                    value={formData.roleId}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:text-white"
+                    disabled={rolesLoading}
                   >
-                    <option value="customer">Customer</option>
-                    <option value="underwriter">Underwriter</option>
-                    <option value="finance-admin">Finance Admin</option>
-                    <option value="support-agent">Support Agent</option>
-                    <option value="compliance-officer">Compliance Officer</option>
-                    <option value="content-ops">Content Operations</option>
-                    <option value="claims-manager">Claims Manager</option>
-                    <option value="risk-analyst">Risk Analyst</option>
-                    <option value="data-analyst">Data Analyst</option>
+                    <option value="">Select a role</option>
+                    {rolesLoading ? (
+                      <option value="">Loading roles...</option>
+                    ) : rolesResponse?.data?.roles &&
+                      rolesResponse.data.roles.length > 0 ? (
+                      rolesResponse.data.roles.map((role) => (
+                        <option key={role._id} value={role._id}>
+                          {role.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">No roles available</option>
+                    )}
                   </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Address Information */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <MapPin className="w-5 h-5 mr-2" />
-                Address Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label htmlFor="street" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Street Address
-                  </label>
-                  <input
-                    type="text"
-                    id="street"
-                    name="street"
-                    value={formData.street}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    City
-                  </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="state" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    State
-                  </label>
-                  <input
-                    type="text"
-                    id="state"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:text-white"
-                  />
                 </div>
               </div>
             </div>
@@ -206,27 +180,17 @@ export function CreateUser() {
             {/* Actions */}
             <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
               <Link to="/users">
-                <Button variant="secondary">Cancel</Button>
+                <Button variant="secondary" disabled={isCreating}>
+                  Cancel
+                </Button>
               </Link>
-              <Button type="submit" loading={loading}>Create User</Button>
+              <Button type="submit" loading={isCreating}>
+                Create User
+              </Button>
             </div>
           </div>
         </div>
       </form>
-
-      {/* Maker-Checker Modal */}
-      {showMakerChecker && (
-        <MakerCheckerModal
-          isOpen={showMakerChecker}
-          onClose={() => setShowMakerChecker(false)}
-          action="Create User"
-          entityType="User"
-          entityId={formData.email}
-          data={formData}
-          riskLevel="medium"
-          onSubmit={handleMakerCheckerSubmit}
-        />
-      )}
     </div>
   );
 }

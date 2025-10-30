@@ -111,4 +111,5 @@ export const {
   useGetCurrentUserQuery,
   useVerifyTokenQuery,
   useGetDashboardDetailsQuery,
+  useGetAllRolesQuery,
 } = authApi;

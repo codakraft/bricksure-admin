@@ -20,20 +20,6 @@ export function ProtectedRoute({
     authData: user,
   } = useSelector((state: RootState) => state.auth);
 
-  console.log("ProtectedRoute check:", {
-    isAuthenticated,
-    loading: status === "loading",
-    user: !!user,
-    userDetails: user,
-    timestamp: new Date().toISOString(),
-    localStorage: {
-      bricksureToken: !!localStorage.getItem("bricksure-token"),
-      bricksureAdmin: !!localStorage.getItem("bricksure-admin"),
-      authToken: !!localStorage.getItem("authToken"),
-      savedUser: !!localStorage.getItem("bricksure_admin_user"),
-    },
-  });
-
   if (status === "loading") {
     console.log("ProtectedRoute: Still loading...");
     return (
